@@ -256,7 +256,7 @@ export function vibe(
           //    write/escape cycles and blow the CPU time limit. Instead we
           //    accumulate until at least CHUNK_FLUSH_BYTES chars are ready,
           //    then flush in one shot.
-          const CHUNK_FLUSH_CHARS = 512;
+          const CHUNK_FLUSH_CHARS = 128;
           let chunkBuf = "";
           let hasChunks = false;
 
