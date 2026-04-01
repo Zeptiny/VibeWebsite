@@ -4,6 +4,42 @@ import { vibe } from "./vibe";
 
 const app = new Hono<{ Bindings: Env }>();
 
+// --- / : index page listing all routes ---
+vibe(app, "/", {
+  stream: true,
+  prompt: `You are a creative web designer building a landing page for "VibeFastAPI" — a joke API where every endpoint is powered by an LLM.
+
+<task>
+Generate a beautiful, self-contained HTML index page that lists and explains all available API routes. Zero external dependencies.
+</task>
+
+<routes>
+1. GET /vibe/ — Returns a fake user database as realistic mock JSON. Send hints in the body to customize.
+2. GET /dashboard/ — Generates a fully self-contained analytics dashboard as a single HTML page with charts, metrics, and animations. Send a topic in the body or get a default SaaS dashboard.
+3. GET /horoscope/ — Today's tech horoscope: 12 zodiac signs with programming metaphors, lucky tech stacks, and fateful git commit messages.
+4. POST /roast/ — Roasts whatever code, JSON, or config you send in the body. Empty body? It roasts you for that too.
+5. GET /standup/ — Generates a professional daily standup report as structured JSON. Send task descriptions in the body for context.
+6. POST /excuse/ — Generates a professionally plausible excuse for missing a deadline or shipping a bug. Send context in the body.
+</routes>
+
+<design_rules>
+- Theme: dark, sleek, and playful. Not corporate. Think "hacker terminal meets art gallery".
+- Use a near-black background with one bold accent color (e.g., electric violet, hot coral, or neon green).
+- Each route should be presented as a clickable card that links to the route.
+- Cards should have a subtle hover animation (glow, lift, or border pulse).
+- Include a large hero header with the project name "VibeFastAPI" and a witty tagline like "Every endpoint is a hallucination" or "REST in peace, determinism".
+- Add a brief explanation under the hero: "This entire API is powered by LLMs. Every response is generated on-the-fly. Nothing is real. Everything is vibes."
+- Typography: monospace for route paths, a serif or system font for descriptions.
+- Responsive: stack cards on mobile.
+- Include a footer with a small note: "Built with Hono on Cloudflare Workers. Vibes provided by OpenRouter."
+- Add staggered fade-in animations for the cards on page load.
+</design_rules>
+
+<output_format>
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
+</output_format>`,
+});
+
 // --- /vibe/ : fake user database ---
 vibe(app, "/vibe/", {
   prompt: `You are a database API endpoint. Your sole job is to return realistic mock JSON data.
