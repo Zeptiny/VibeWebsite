@@ -51,6 +51,75 @@ function extractOutputText(data: Record<string, unknown>): string {
 }
 
 /**
+ * Stream text chunks from OpenRouter using Server-Sent Events (SSE).
+ * Yields each text delta as it arrives so the caller can flush it to the
+ * browser immediately.
+ */
+async function* streamLLM(
+  env: Env,
+  model: string,
+  prompt: string,
+  userContent: string,
+  temperature: number,
+): AsyncGenerator<string> {
+  const resp = await fetch(OPENROUTER_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      instructions: prompt,
+      input: [{ type: "message", role: "user", content: userContent }],
+      temperature,
+      stream: true,
+      provider: { sort: "throughput" },
+    }),
+  });
+
+  if (!resp.ok) {
+    const detail = await resp.text();
+    throw new Error(`OpenRouter ${resp.status}: ${detail}`);
+  }
+
+  const reader = resp.body!.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    // SSE lines are separated by \n; events by \n\n
+    const lines = buffer.split("\n");
+    // Keep the last (potentially incomplete) line in the buffer
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      const trimmed = line.trimStart();
+      if (!trimmed.startsWith("data:")) continue;
+      const data = trimmed.slice(5).trim();
+      if (data === "[DONE]") return;
+      try {
+        const event = JSON.parse(data) as Record<string, unknown>;
+        // OpenAI Responses API streaming event for text deltas
+        if (
+          event.type === "response.output_text.delta" &&
+          typeof event.delta === "string" &&
+          event.delta
+        ) {
+          yield event.delta;
+        }
+      } catch {
+        // Ignore non-JSON SSE comment/heartbeat lines
+      }
+    }
+  }
+}
+
+/**
  * Call OpenRouter and return the raw text output.
  */
 async function callLLM(
@@ -84,6 +153,17 @@ async function callLLM(
 
   const data = (await resp.json()) as Record<string, unknown>;
   return extractOutputText(data);
+}
+
+/**
+ * Escape a string so it can be safely embedded as a template-literal value
+ * inside a <script> tag in a streaming HTML response.
+ */
+function escapeForTemplateLiteral(text: string): string {
+  return text
+    .replace(/\\/g, "\\\\")
+    .replace(/`/g, "\\`")
+    .replace(/<\/script>/gi, "<\\/script>");
 }
 
 /**
@@ -159,13 +239,10 @@ export function vibe(
       }
     }
 
-    // --- Streaming path: flush loading shell, then swap in real content ---
+    // --- Streaming path: flush loading shell, then stream tokens into iframe ---
     const encoder = new TextEncoder();
     const { readable, writable } = new TransformStream<Uint8Array>();
     const writer = writable.getWriter();
-
-    // Kick off the LLM call (don't await yet) and start streaming immediately
-    const llmPromise = callLLM(env, resolvedModel, prompt, userContent, temperature);
 
     // Use waitUntil so the worker doesn't terminate before the stream finishes
     c.executionCtx.waitUntil(
@@ -174,18 +251,26 @@ export function vibe(
           // 1. Flush the loading shell instantly
           await writer.write(encoder.encode(loadingShell));
 
-          // 2. Await the LLM response
-          const text = await llmPromise;
+          // 2. Stream LLM chunks; each chunk is injected as a _vchunk() call
+          //    which writes it into the progressive-rendering iframe.
+          let hasChunks = false;
+          for await (const chunk of streamLLM(env, resolvedModel, prompt, userContent, temperature)) {
+            hasChunks = true;
+            await writer.write(
+              encoder.encode(`<script>_vchunk(\`${escapeForTemplateLiteral(chunk)}\`)</script>`),
+            );
+          }
 
-          // 3. Inject the real content via a script that replaces the page
-          //    We escape </script> sequences and backticks in the LLM output
-          const escaped = text
-            .replace(/\\/g, "\\\\")
-            .replace(/`/g, "\\`")
-            .replace(/<\/script>/gi, "<\\/script>");
-
-          const swap = `<script>setTimeout(()=>{document.open();document.write(\`${escaped}\`);document.close();},0);</script>`;
-          await writer.write(encoder.encode(swap));
+          // 3. Signal completion — swaps iframe content into the main document.
+          //    If no SSE chunks arrived (model doesn't support streaming),
+          //    fall back to a single callLLM so the page still renders.
+          if (!hasChunks) {
+            const text = await callLLM(env, resolvedModel, prompt, userContent, temperature);
+            await writer.write(
+              encoder.encode(`<script>_vchunk(\`${escapeForTemplateLiteral(text)}\`)</script>`),
+            );
+          }
+          await writer.write(encoder.encode(`<script>_vdone()</script>`));
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
           const errorHTML = `<script>document.getElementById("loading-message").textContent="Error: ${msg.replace(/"/g, '\\"')}";</script>`;
