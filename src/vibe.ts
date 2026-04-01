@@ -71,6 +71,9 @@ async function callLLM(
       instructions: prompt,
       input: [{ type: "message", role: "user", content: userContent }],
       temperature,
+      "provider": {
+        "sort": "throughput"
+      },
     }),
   });
 
