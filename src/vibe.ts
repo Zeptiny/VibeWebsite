@@ -251,15 +251,32 @@ export function vibe(
           // 1. Flush the loading shell instantly
           await writer.write(encoder.encode(loadingShell));
 
-          // 2. Stream LLM chunks; each chunk is injected as a _vchunk() call
-          //    which writes it into the progressive-rendering iframe.
+          // 2. Stream LLM chunks, batching them to reduce per-token CPU cost.
+          //    Writing one <script> per token would trigger hundreds of encode/
+          //    write/escape cycles and blow the CPU time limit. Instead we
+          //    accumulate until at least CHUNK_FLUSH_BYTES chars are ready,
+          //    then flush in one shot.
+          const CHUNK_FLUSH_CHARS = 512;
+          let chunkBuf = "";
           let hasChunks = false;
+
+          const flushChunkBuf = async () => {
+            if (!chunkBuf) return;
+            await writer.write(
+              encoder.encode(`<script>_vchunk(\`${escapeForTemplateLiteral(chunkBuf)}\`)</script>`),
+            );
+            chunkBuf = "";
+          };
+
           for await (const chunk of streamLLM(env, resolvedModel, prompt, userContent, temperature)) {
             hasChunks = true;
-            await writer.write(
-              encoder.encode(`<script>_vchunk(\`${escapeForTemplateLiteral(chunk)}\`)</script>`),
-            );
+            chunkBuf += chunk;
+            if (chunkBuf.length >= CHUNK_FLUSH_CHARS) {
+              await flushChunkBuf();
+            }
           }
+          // Flush any remaining buffered text before signalling completion.
+          await flushChunkBuf();
 
           // 3. Signal completion — swaps iframe content into the main document.
           //    If no SSE chunks arrived (model doesn't support streaming),
