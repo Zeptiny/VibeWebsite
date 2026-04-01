@@ -11,7 +11,7 @@
   ],
   "vars": {
     // Default model — override via wrangler.jsonc or dashboard
-    "OPENROUTER_MODEL": "nvidia/nemotron-3-super-120b-a12b"
+    "OPENROUTER_MODEL": "openai/gpt-oss-20b"
   }
   // Set the API key as a secret (never in config):
   //   npx wrangler secret put OPENROUTER_API_KEY
