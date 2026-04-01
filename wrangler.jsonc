@@ -1,0 +1,11 @@
+{
+  "name": "vibefastapi-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-01",
+  "vars": {
+    // Default model — override via wrangler.jsonc or dashboard
+    "OPENROUTER_MODEL": "openai/gpt-4.1-mini"
+  }
+  // Set the API key as a secret (never in config):
+  //   npx wrangler secret put OPENROUTER_API_KEY
+}
