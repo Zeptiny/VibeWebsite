@@ -2,6 +2,13 @@
   "name": "vibewebsite",
   "main": "src/index.ts",
   "compatibility_date": "2026-03-01",
+  "routes": [
+    {
+      "pattern": "vibed.nyuu.dev",
+      "zone_name": "nyuu.dev",
+      "custom_domain": true
+    }
+  ],
   "vars": {
     // Default model — override via wrangler.jsonc or dashboard
     "OPENROUTER_MODEL": "nvidia/nemotron-3-super-120b-a12b"
