@@ -181,7 +181,7 @@ export function vibe(
             .replace(/`/g, "\\`")
             .replace(/<\/script>/gi, "<\\/script>");
 
-          const swap = `<script>document.open();document.write(\`${escaped}\`);document.close();</script>`;
+          const swap = `<script>setTimeout(()=>{document.open();document.write(\`${escaped}\`);document.close();},0);</script>`;
           await writer.write(encoder.encode(swap));
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);

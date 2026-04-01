@@ -76,6 +76,5 @@ export const loadingShell = `<!DOCTYPE html>
   <div class="spinner"></div>
   <p id="loading-message">Generating response&hellip;</p>
   <div class="dots"><span></span><span></span><span></span></div>
-</body>
-</html>
+<!-- stream kept open for swap script -->
 `;

@@ -7,7 +7,7 @@ const app = new Hono<{ Bindings: Env }>();
 // --- / : index page listing all routes ---
 vibe(app, "/", {
   stream: true,
-  prompt: `You are a creative web designer building a landing page for "VibeFastAPI" — a joke API where every endpoint is powered by an LLM.
+  prompt: `You are a creative web designer building a landing page for "VibeWebsite" — a joke API where every endpoint is powered by an LLM.
 
 <task>
 Generate a beautiful, self-contained HTML index page that lists and explains all available API routes. Zero external dependencies.
@@ -27,7 +27,7 @@ Generate a beautiful, self-contained HTML index page that lists and explains all
 - Use a near-black background with one bold accent color (e.g., electric violet, hot coral, or neon green).
 - Each route should be presented as a clickable card that links to the route.
 - Cards should have a subtle hover animation (glow, lift, or border pulse).
-- Include a large hero header with the project name "VibeFastAPI" and a witty tagline like "Every endpoint is a hallucination" or "REST in peace, determinism".
+- Include a large hero header with the project name "VibeWebsite" and a witty tagline like "Every endpoint is a hallucination" or "REST in peace, determinism".
 - Add a brief explanation under the hero: "This entire API is powered by LLMs. Every response is generated on-the-fly. Nothing is real. Everything is vibes."
 - Typography: monospace for route paths, a serif or system font for descriptions.
 - Responsive: stack cards on mobile.
