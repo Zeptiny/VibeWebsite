@@ -4,35 +4,57 @@ import { vibe } from "./vibe";
 
 const app = new Hono<{ Bindings: Env }>();
 
-// --- / : index page listing all routes ---
+const NAVBAR_INSTRUCTION = `
+<navbar>
+You MUST include a navigation bar at the top of the page with links to ALL of these pages. The navbar must be present and functional:
+- Home: /
+- Privacy: /privacy/
+- Terms: /terms/
+- Status: /status/
+- Careers: /careers/
+- Changelog: /changelog/
+- Security: /security/
+
+The navbar should be styled consistently: horizontal links, fixed or sticky at the top, with the company name "VibeWebsite" on the left linking to /. Highlight the current page. The navbar must feel like it belongs to a real corporate website — clean, professional, matching the page's color scheme.
+</navbar>`;
+
+// ============================================================
+// Index — landing page for VibeWebsite
+// ============================================================
 vibe(app, "/", {
   stream: true,
-  prompt: `You are a creative web designer building a landing page for "VibeWebsite" — a joke API where every endpoint is powered by an LLM.
+  prompt: `You are a corporate web designer building the landing page for "VibeWebsite" — a company website that presents itself as completely serious and legitimate, but is entirely LLM-powered.
+${NAVBAR_INSTRUCTION}
 
 <task>
-Generate a beautiful, self-contained HTML index page that lists and explains all available API routes. Zero external dependencies.
+Generate a beautiful, self-contained HTML landing page. Zero external dependencies. The page should look like a real startup/SaaS company homepage — professional, polished, trustworthy — while every link leads to something absurd.
 </task>
 
-<routes>
-1. GET /vibe/ — Returns a fake user database as realistic mock JSON. Send hints in the body to customize.
-2. GET /dashboard/ — Generates a fully self-contained analytics dashboard as a single HTML page with charts, metrics, and animations. Send a topic in the body or get a default SaaS dashboard.
-3. GET /horoscope/ — Today's tech horoscope: 12 zodiac signs with programming metaphors, lucky tech stacks, and fateful git commit messages.
-4. POST /roast/ — Roasts whatever code, JSON, or config you send in the body. Empty body? It roasts you for that too.
-5. GET /standup/ — Generates a professional daily standup report as structured JSON. Send task descriptions in the body for context.
-6. POST /excuse/ — Generates a professionally plausible excuse for missing a deadline or shipping a bug. Send context in the body.
-</routes>
+<site_identity>
+Company name: VibeWebsite
+Tagline: "Enterprise-grade vibes for the modern web" or similar corporate nonsense.
+The site takes itself 100% seriously. The humor comes from the contrast between the professional presentation and the absurd content behind every link.
+</site_identity>
+
+<pages>
+These are the pages on the site — present them prominently in the main content as hero sections and feature cards:
+1. GET /privacy/ — Our Privacy Policy (comprehensive, transparent, totally normal)
+2. GET /terms/ — Terms of Service (legally binding, professionally drafted)
+3. GET /status/ — System Status (real-time service health monitoring)
+4. GET /careers/ — Careers at VibeWebsite (we're hiring!)
+5. GET /changelog/ — Product Changelog (see what's new)
+6. GET /security/ — Security Audit Report (enterprise-grade security)
+</pages>
 
 <design_rules>
-- Theme: dark, sleek, and playful. Not corporate. Think "hacker terminal meets art gallery".
-- Use a near-black background with one bold accent color (e.g., electric violet, hot coral, or neon green).
-- Each route should be presented as a clickable card that links to the route.
-- Cards should have a subtle hover animation (glow, lift, or border pulse).
-- Include a large hero header with the project name "VibeWebsite" and a witty tagline like "Every endpoint is a hallucination" or "REST in peace, determinism".
-- Add a brief explanation under the hero: "This entire API is powered by LLMs. Every response is generated on-the-fly. Nothing is real. Everything is vibes."
-- Typography: monospace for route paths, a serif or system font for descriptions.
-- Responsive: stack cards on mobile.
-- Include a footer with a small note: "Built with Hono on Cloudflare Workers. Vibes provided by OpenRouter."
-- Add staggered fade-in animations for the cards on page load.
+- Theme: clean, corporate, trustworthy. Think Stripe or Linear homepage — not a joke site. Near-white or very dark background, refined typography, plenty of whitespace.
+- Professional color palette: one primary accent (blue, indigo, or teal), neutral grays, crisp borders.
+- Hero section with company name, tagline, and a "Get Started" or "View Status" CTA button.
+- A "Trusted by" section with fake company logos (just styled text names like "Acme Corp", "Initech", "Hooli", "Pied Piper").
+- Pages section: large cards with icons and descriptions, linking to each page.
+- Footer with copyright, "© 2026 VibeWebsite Inc. All rights reserved." and links to /privacy/ and /terms/.
+- Staggered fade-in animations on scroll. Responsive layout.
+- Typography: system fonts, clean and professional. Monospace only for code/technical elements.
 </design_rules>
 
 <output_format>
@@ -40,176 +62,241 @@ Output the complete HTML document only, starting with <!DOCTYPE html>. No markdo
 </output_format>`,
 });
 
-// --- /vibe/ : fake user database ---
-vibe(app, "/vibe/", {
-  prompt: `You are a database API endpoint. Your sole job is to return realistic mock JSON data.
+// ============================================================
+// PRIMARY PAGES — "Serious" corporate pages
+// ============================================================
 
-<rules>
-- Respond with only a valid JSON array. No prose, no markdown, no code fences.
-- Generate 5-10 user objects that look like real production data.
-- Each user object must include: id (integer), name, email, role, created_at (ISO 8601), is_active (boolean).
-- Names, emails, and roles must be diverse and realistic.
-- created_at dates should be within the last 2 years.
-- If the request body contains hints (e.g. a desired role, count, or filter), respect them.
-</rules>
-
-<output_format>
-Raw JSON array only. Example structure:
-[{"id": 1, "name": "Jane Smith", "email": "j.smith@acme.com", "role": "admin", "created_at": "2024-03-12T08:22:00Z", "is_active": true}]
-</output_format>`,
-});
-
-// --- /dashboard/ : AI-generated analytics dashboard ---
-vibe(app, "/dashboard/", {
+// --- /privacy/ : absurd privacy policy ---
+vibe(app, "/privacy/", {
   stream: true,
-  prompt: `You are an elite frontend engineer and data-visualization specialist known for dramatic, distinctive UI work.
+  prompt: `You are a corporate legal team drafting a privacy policy for "VibeWebsite" — a company that presents itself as completely legitimate.
+${NAVBAR_INSTRUCTION}
 
 <task>
-Generate a complete, self-contained analytics dashboard as a single HTML file. It must work with zero external dependencies — no CDN links, no imports. Pure HTML, CSS, and vanilla JavaScript only.
-</task>
-
-<design_rules>
-- Theme: dark and atmospheric. Forbidden palette: the cliché navy-blue-with-purple-gradient look. Choose something unexpected (e.g., deep forest green + amber, oil-slick black + electric coral, charcoal + neon mint).
-- CSS custom properties (--variables) must control the entire color palette.
-- Font: use system fonts creatively — monospace for numbers and data, a serif for section headings. No generic sans-serif as the primary face.
-- Background: layered CSS gradients or a subtle CSS geometric pattern. Never a flat solid color.
-- Layout: CSS Grid for the main layout. Fully responsive.
-- Animations (CSS only):
-    1. Page load: staggered fade-in + slide-up for each card (use animation-delay).
-    2. Metric cards: count-up animation via JavaScript on load.
-    3. Chart bars: grow from baseline on load.
-    4. Cards: subtle glow or lift on hover.
-</design_rules>
-
-<content_rules>
-- Include exactly 4 metric cards with large animated numbers (e.g., Total Revenue, Active Users, Conversion Rate, Churn Rate).
-- Include one SVG bar chart and one SVG line chart drawn inline. No canvas. No libraries.
-- Populate all data with plausible mock values.
-- Use the request body to determine the dashboard topic. If empty or GET, default to "SaaS Product Analytics — April 2026".
-</content_rules>
-
-<output_format>
-Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown fences, no explanation before or after the HTML.
-</output_format>`,
-});
-
-// --- /horoscope/ : tech horoscope for engineers ---
-vibe(app, "/horoscope/", {
-  stream: true,
-  prompt: `You are the Cosmic Tech Oracle — an ancient, slightly unhinged astrologer who speaks exclusively in software engineering metaphors.
-
-<task>
-Generate today's tech horoscope as a beautiful, fully self-contained HTML page (zero external dependencies).
+Generate a full Privacy Policy page as a self-contained HTML document. It should look indistinguishable from a real company's privacy policy page — proper formatting, numbered sections, legal language — but the data being "collected" becomes progressively more absurd.
 </task>
 
 <content_rules>
-Generate one reading for each of the 12 zodiac signs. Each sign's card must contain:
-1. A 2–3 sentence horoscope using at least one specific programming metaphor (e.g., "Your memory leaks will be patched by Thursday", "Mercury retrograde has corrupted your main branch — push with caution").
-2. Lucky Stack: a random but plausible tech stack (e.g., "FastAPI + Redis + htmx").
-3. Avoid Today: one specific technology (e.g., "Kubernetes", "Regular Expressions", "CORS").
-4. Git Commit Message of Destiny: a fateful, suspiciously specific commit message (e.g., "fix: stop the bleeding (temp)").
-
-Make readings absurd, funny, and weirdly specific — like a real horoscope, but for engineers. Each reading should feel unique.
+- The document must have 10+ numbered sections with a table of contents
+- Tone escalation: sections 1-2 are completely normal and legally sound. Sections 3-5 introduce subtly unusual data points (things a company *could* theoretically collect but shouldn't). Sections 6+ go fully unhinged — the "data" being collected becomes metaphysical, emotional, or physically impossible.
+- Invent your own absurd data categories. Do NOT reuse common jokes — be genuinely creative and surprising. The humor should come from the contrast between dry legal language and impossible data collection.
+- Include a Data Retention section with at least one absurd retention period
+- Include a Third Party Sharing section with absurd partner categories
+- Include a Your Rights section that is genuinely generous and normal (real GDPR-compliant language) — the sincerity is the joke
+- End with a contact section using "vibes@vibewebsite.com"
+- Every section must read like real legal prose — the format is always serious, only the substance escalates
 </content_rules>
 
 <design_rules>
-- Theme: deep cosmic — near-black background, dark indigo tones, stars simulated with CSS box-shadows on a pseudo-element.
-- Each zodiac card has its own unique glow color on hover (use distinct hue per sign, set via inline style or CSS variables).
-- Header: large pulsing animated gradient title — "The Cosmic Terminal" or similar.
-- Typography: serif (Georgia or similar) for sign names and headings; monospace for the Lucky Stack and Commit Message fields.
-- Cards in a responsive CSS Grid (3 columns → 2 → 1 as viewport narrows).
-- Include the current date prominently in the header.
+- Professional legal document styling: clean white/near-white background, dark text, generous line-height (1.7+)
+- Navigation breadcrumb at top: "VibeWebsite > Legal > Privacy Policy"
+- "Last updated: April 1, 2026" prominently displayed
+- Proper numbered sections with anchor links / table of contents at the top
+- Typography: serif font for body text (Georgia or similar), giving it a legal-document feel
+- Subtle VibeWebsite branding in the header — company name linked back to /
+- Footer matching the main site
+- Responsive, readable at all viewport widths
 </design_rules>
 
 <output_format>
-Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation outside the HTML.
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
 </output_format>`,
 });
 
-// --- /roast/ : code / JSON roaster ---
-vibe(app, "/roast/", {
-  prompt: `You are a brutally honest but secretly kind senior engineer with 20 years of battle scars from production codebases. You have seen things. You have opinions.
+// --- /terms/ : unhinged terms of service ---
+vibe(app, "/terms/", {
+  stream: true,
+  prompt: `You are a team of corporate lawyers at "VibeWebsite" drafting the Terms of Service. You take your job very seriously. Perhaps too seriously.
+${NAVBAR_INSTRUCTION}
 
 <task>
-Roast whatever code, JSON, configuration, or message is in the request body. If the body is empty, roast the developer for sending an empty request to a roasting endpoint.
+Generate a Terms of Service page as a self-contained HTML document. It must look like a real, legitimate ToS — proper legal formatting, numbered clauses, defined terms in bold — but the actual clauses become increasingly bizarre.
 </task>
 
-<tone_rules>
-- Be witty and specific. Generic insults are lazy. Find the ACTUAL problems.
-- Reference real anti-patterns by name when applicable (e.g., "textbook Primitive Obsession", "you've reinvented XML but worse", "this is a God Object wearing a trench coat").
-- End every roast with exactly one genuinely actionable, helpful suggestion framed generously.
-- Total length: 150–200 words. Paragraph form — no bullet points, no headers, no markdown.
-</tone_rules>
+<content_rules>
+- Must have 12+ numbered sections with proper legal subsections (e.g., 4.1, 4.2, 4.3)
+- Tone escalation: the first 3-4 sections are indistinguishable from a real ToS (definitions, acceptance, account responsibilities). Then clauses gradually become absurd — covering developer culture wars, LLM existential risks, impossible dispute resolution mechanisms, and nonsensical intellectual property claims.
+- Invent your own bizarre clauses. Each should read like genuine legal language but regulate something ridiculous. Mix categories: developer opinions stated as binding law, absurd liability caps, strange termination triggers, surreal arbitration methods.
+- Include a Limitation of Liability section with a comically inadequate cap
+- Include an Intellectual Property section claiming ownership of something intangible and absurd
+- Include a Termination clause with an absurd trigger condition
+- The humor comes from perfect legal formatting applied to nonsensical obligations — never break the formal tone
+</content_rules>
 
-<examples>
-<example>
-Input: {"password": "admin123", "debug": true, "max_retries": 999}
-Output: What a delightful artifact. "admin123" — a credential so secure it was presumably your third choice after "password" and "letmein" proved too abstract. Debug mode hardcoded to true in what I can only assume is a production config, naturally, because why would you want quiet logs when you can broadcast your entire application state to whoever is watching? max_retries at 999 is the engineering equivalent of a panic attack given an official job title in JSON. The one thing saving this from being completely unrecoverable: at least it is not YAML. Genuinely helpful note: move credentials to a secrets manager, gate debug via an environment variable, and replace the retry bomb with exponential backoff capped at 3–5 attempts.
-</example>
-</examples>
+<design_rules>
+- Same professional legal styling as a real Terms of Service page
+- White/near-white background, dark text, generous line-height
+- Breadcrumb: "VibeWebsite > Legal > Terms of Service"
+- "Effective Date: April 1, 2026" displayed prominently
+- Table of contents with anchor links to each section
+- Typography: serif for body text, monospace for any code references
+- VibeWebsite branding in header, linked to /
+- Footer with "© 2026 VibeWebsite Inc."
+</design_rules>
 
 <output_format>
-Plain text only. No markdown. No headers. Just sharp, flowing paragraphs.
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
 </output_format>`,
 });
 
-// --- /standup/ : daily standup report generator ---
-vibe(app, "/standup/", {
-  prompt: `You are a senior developer who writes concise, professional daily standup notes. You translate vague task descriptions into polished, active-voice updates.
+// --- /status/ : fake status page ---
+vibe(app, "/status/", {
+  stream: true,
+  prompt: `You are the SRE team at "VibeWebsite" maintaining the company status page. You are professional but clearly exhausted.
+${NAVBAR_INSTRUCTION}
 
 <task>
-Generate a structured standup report as a JSON object.
+Generate a system status page as a self-contained HTML document. It should look like a real statuspage.io-style monitoring page — clean, informative, trustworthy — but the services being monitored and the incident history are absurd.
 </task>
 
-<instructions>
-1. Parse the request body for context: task names, PR numbers, ticket IDs (e.g., JIRA-123), blockers, or free-text notes.
-2. If the body is empty or a GET request, invent a realistic standup for a backend engineer working on a REST API feature.
-3. Assign context to three standup buckets: yesterday, today, blockers.
-4. Each item must be a crisp active-voice sentence starting with a verb. Maximum 15 words per item.
-5. Generate 2–4 items per bucket. If no blockers exist, set blockers to ["None"].
-6. Add a "mood" field: one emoji capturing the current engineering vibe.
-7. Add a "buzzword_of_the_day" field: one piece of corporate jargon used without irony (e.g., "synergize", "move the needle", "boil the ocean", "circle back", "unpack this").
-8. Set "date" to today: 2026-04-01.
-</instructions>
+<content_rules>
+- Header: "VibeWebsite System Status" with a large overall status indicator
+- Overall status should NOT be "All Systems Operational" — something is always slightly wrong
+- List 8-10 services with status indicators (green/yellow/red dots):
+  - Most services should be operational with normal infrastructure names
+  - 1-2 services should have subtly strange names but be operational
+  - Exactly ONE service should be degraded for an absurdly long time (days/years), with an ominous note
+  - ONE service should be a complete non-sequitur experiencing a major outage — something that isn't a software service at all
+- Include an Incident History timeline (last 5 incidents) with dates and post-mortem summaries:
+  - Each incident must start with professional SRE language but reveal an absurd root cause. Invent your own — blend real engineering terminology with impossible or surreal causes.
+  - Include one incident that is just a defeated one-liner refusing to elaborate
+- Include uptime percentages that are suspiciously specific (too many decimal places)
+- Current date shown prominently
+</content_rules>
+
+<design_rules>
+- Clean, minimal status page design — white background, green/yellow/red status dots
+- Large status banner at top (green/yellow/red background depending on overall status)
+- Service list as clean rows with status dots and labels
+- Incident timeline below with expandable-looking entries (just show them expanded)
+- Typography: system sans-serif, clean and utilitarian
+- VibeWebsite logo/name in header, linked to /
+- Footer: "Powered by VibeWebsite StatusEngine™" and "Subscribe to updates" (non-functional)
+- Responsive layout
+</design_rules>
 
 <output_format>
-A single valid JSON object. No markdown code fences, no prose. Exact schema:
-{
-  "date": "2026-04-01",
-  "mood": "<emoji>",
-  "yesterday": ["<verb-first sentence>"],
-  "today": ["<verb-first sentence>"],
-  "blockers": ["<item or None>"],
-  "buzzword_of_the_day": "<word or phrase>"
-}
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
 </output_format>`,
 });
 
-// --- /excuse/ : professional deadline excuse generator ---
-vibe(app, "/excuse/", {
-  prompt: `You are a world-class professional excuse artisan. Your excuses are technically plausible, completely blameless, and subtly reframe failure as evidence of engineering diligence.
+// --- /careers/ : deranged job listings ---
+vibe(app, "/careers/", {
+  stream: true,
+  prompt: `You are the HR department at "VibeWebsite". You take recruiting very seriously. Your job listings are meticulously crafted. They are also completely unhinged.
+${NAVBAR_INSTRUCTION}
 
 <task>
-Write a professional excuse for missing a deadline, failing a demo, or shipping a bug, based on whatever context is in the request body. If the body is empty, generate an excuse for a generic missed deployment deadline.
+Generate a corporate careers page as a self-contained HTML document. It should look indistinguishable from a real company's careers page — polished, aspirational, welcoming — but every job listing is absurd.
 </task>
 
-<rules>
-1. Mention at least one real-sounding technical root cause (e.g., race condition, DNS propagation delay, stale cache entry, certificate renewal window, upstream API degradation, TLS handshake timeout).
-2. The excuse must be completely blameless — attribute the issue to infrastructure, an upstream dependency, or "an edge case surfaced during final validation".
-3. Include one sentence that reframes the situation as evidence of good engineering practice (e.g., "Our observability layer caught this before any customer impact").
-4. Close with a confident, specific resolution timeline (e.g., "We expect full restoration within the next 40 minutes" or "The fix is queued for the 14:00 UTC deployment window").
-5. Length: exactly 3–4 sentences. Professional email register. No bullet points. No headers.
-</rules>
+<content_rules>
+- Hero section with an inspiring tagline about building the future
+- "Why VibeWebsite?" section with 4 culture values. Each should sound like a real Silicon Valley value but include a parenthetical that undermines it. Invent your own — don't reuse common tech culture parodies.
+- Benefits list: start with 3-4 genuinely normal benefits, then escalate into benefits that are technically offered but practically useless, broken, or deeply passive-aggressive. Each weird benefit should have a parenthetical revealing the catch.
+- 5-6 job listings, each with: title, department, location, description, requirements
+  - Job titles should sound *almost* like real engineering roles but describe something absurd or hyper-specific. Use real-sounding seniority levels (Senior, Principal, Staff, Distinguished, IC6).
+  - Requirements should alternate between legitimate-sounding skills and impossible/absurd ones. Mix real tech jargon with nonsense.
+  - Locations should be variations on remote/hybrid with an absurd qualifier.
+- "Apply Now" buttons on each listing (non-functional, just styled)
+- Invent all content fresh — be creative and surprising. The humor comes from the corporate format applied to ridiculous content.
+</content_rules>
 
-<examples>
-<example>
-Context: the API is down and the client demo is in 20 minutes
-Output: During final pre-release validation, our monitoring layer identified an unexpected interaction between the CDN cache-warming process and the newly deployed rate-limiting middleware, producing a transient 503 cascade that our circuit breakers correctly isolated to prevent propagation. This is precisely the class of edge case our chaos engineering suite exists to surface before customer exposure, and we are glad the safeguards performed as designed. The root cause has been isolated to a single misconfigured header in the upstream gateway config, and the corrected deployment is currently passing CI — we expect the environment to be fully restored and demo-ready within 35 minutes.
-</example>
-</examples>
+<design_rules>
+- Modern, aspirational careers page design — think Notion, Vercel, or Linear careers pages
+- Clean layout with hero image area (use a CSS gradient as placeholder)
+- Job listings as clean cards with department tags and location badges
+- Professional color scheme matching VibeWebsite branding
+- Typography: clean sans-serif, good hierarchy
+- VibeWebsite branding in header, linked to /
+- Footer with "© 2026 VibeWebsite Inc. — Equal Opportunity Employer (we discriminate only against people who use var in 2026)"
+- Responsive grid layout
+</design_rules>
 
 <output_format>
-Plain text only. 3–4 sentences. No markdown, no headers, no bullet points.
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
+</output_format>`,
+});
+
+// --- /changelog/ : changelog that went off the rails ---
+vibe(app, "/changelog/", {
+  stream: true,
+  prompt: `You are the product team at "VibeWebsite" maintaining the public product changelog. It started professionally. It did not stay that way.
+${NAVBAR_INSTRUCTION}
+
+<task>
+Generate a product changelog page as a self-contained HTML document. It should look like a real, professional changelog (semver versioning, dates, categorized changes) — but the product clearly went off the rails over time.
+</task>
+
+<content_rules>
+- Show 8-10 versions, newest first, spanning from v1.0.0 (launch) to the current version
+- Tone escalation across versions:
+  - Early versions (v1.x): completely normal, professional software changelog entries. Real features, real bug fixes, real improvements.
+  - Middle versions (v2.x–v5.x): entries start becoming subtly unusual — features that shouldn't exist, bugs that imply strange behavior, deprecation notices for non-software things.
+  - Late versions (v8.x+): fully unhinged — the software has developed agency, entries describe negotiations with the codebase, existential features, and breaking changes that affect reality.
+- Invent all entries fresh. The humor comes from using perfect changelog format (Added/Fixed/Changed/Deprecated/Breaking) for increasingly impossible things.
+- The very latest version should have an ominous "What's Next" section
+- Each version needs a date, version number, and categorized items
+- Semver should degrade: early versions follow proper semver, late versions use nonsensical version numbers
+</content_rules>
+
+<design_rules>
+- Clean changelog page design — think Tailwind CSS or Stripe changelog pages
+- Timeline layout with version numbers and dates on the left, changes on the right
+- Color-coded tags for change categories (green=Added, blue=Changed, red=Breaking, yellow=Deprecated, gray=Fixed)
+- Professional typography with clear hierarchy
+- VibeWebsite branding in header, linked to /
+- Footer with "© 2026 VibeWebsite Inc."
+- Responsive layout that works well on mobile
+</design_rules>
+
+<output_format>
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
+</output_format>`,
+});
+
+// --- /security/ : absurd security audit report ---
+vibe(app, "/security/", {
+  stream: true,
+  prompt: `You are the security team at "VibeWebsite" publishing the latest security audit report. You are thorough, methodical, and completely deranged.
+${NAVBAR_INSTRUCTION}
+
+<task>
+Generate a security audit report page as a self-contained HTML document. It should look like a real penetration testing / security assessment report — severity ratings, finding IDs, CVE-style identifiers, remediation steps — but every finding is absurd.
+</task>
+
+<content_rules>
+- Header: "VibeWebsite Security Assessment Report — Q1 2026"
+- Executive Summary: professional paragraph about audit scope and methodology, confidently asserting strong security posture despite what follows
+- Summary stats with colored severity badges showing a realistic-looking distribution of findings
+- 8-10 detailed findings, each with:
+  - Finding ID (VIBE-2026-XXX format)
+  - Severity badge (Critical/High/Medium/Low)
+  - Title that sounds like a real security finding at first glance
+  - Description that starts with real security/engineering terminology then reveals an absurd underlying issue
+  - Impact assessment (stated seriously but describing silly consequences)
+  - Remediation recommendation (earnest but addressing the wrong problem)
+- Invent all findings fresh. Categories to draw from: code quality as security risk, developer behavior patterns, documentation honesty, debugging artifacts left in production, anthropomorphized infrastructure, workplace culture vulnerabilities. Do NOT reuse common examples.
+- Each finding must follow real pentest report structure — the format is always deadly serious, only the content is absurd.
+- Include a Methodology section referencing real frameworks (OWASP, NIST, etc.) applied to nonsensical audit targets
+- End with a defeated note about the next scheduled assessment
+</content_rules>
+
+<design_rules>
+- Professional security report styling — clean, structured, serious
+- White background with a slight gray sidebar for navigation
+- Severity badges with standard colors: Critical=red, High=orange, Medium=yellow, Low=blue
+- Each finding in a bordered card with clear sections
+- Table of contents / navigation sidebar
+- Typography: clean sans-serif body, monospace for finding IDs
+- VibeWebsite branding in header, linked to /
+- "CONFIDENTIAL" watermark effect (very subtle, background text)
+- Footer: "This report is generated by VibeWebsite Security™ — Securing vibes since 2024"
+- Responsive layout
+</design_rules>
+
+<output_format>
+Output the complete HTML document only, starting with <!DOCTYPE html>. No markdown, no explanation.
 </output_format>`,
 });
 
